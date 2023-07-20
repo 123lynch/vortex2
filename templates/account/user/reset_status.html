@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<style>
+    .container-fluid {
+        max-width: 100%;
+    }
+
+    .account-form input {
+        border: 2px solid #ccc;
+        height: calc(2em + .75rem + 2px);
+    }
+
+    .account-form input:focus {
+        border-color: #1497ff;
+        box-shadow: none;
+    }
+</style>
+
+
+<div class="courses-area section-padding40 fix">
+    <div class="container">
+    <div class="row justify-content-center">
+    <div class="col-xl-7 col-lg-8">
+    <div class="section-tittle text-center mb-55">
+    {% if 'email' in request.get_full_path %}
+        <h3 class="mb-4">Password Reset Success</h3>
+        <p>Check your email for instructions</p>
+    {% endif%}
+    {% if 'complete' in request.get_full_path %}
+        <h3 class="mb-4">Password Reset Success</h3>
+        <h4><a href="{% url "account:login" %}">Login</a></h4>
+    {% endif%}
+    </div>
+    </div>
+    </div>
+    </div>
+    </div>
+
+{%  endblock  %}

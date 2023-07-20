@@ -1,0 +1,324 @@
+﻿{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<main>
+  <section class="slider-area slider-area2">
+    <div class="slider-active">
+
+      <div class="single-slider slider-height2">
+        <div class="container">
+          <div class="row">
+            <div class="col-xl-8 col-lg-11 col-md-12">
+              <div class="hero__caption hero__caption2">
+                <h1 data-animation="bounceIn" data-delay="0.2s">{{ blogpost.title }}</h1>
+
+                <nav aria-label="breadcrumb">
+                  <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'courses:index' %}">Home</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'blog:bloglist' %}">Blog</a></li>
+                  </ol>
+                </nav>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <section class="blog_area single-post-area section-padding">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 posts-list">
+          <div class="single-post">
+            <div class="feature-img">
+              <img class="img-fluid" src="{{ blogpost.image.url }}" alt="">
+            </div>
+            <div class="blog_details">
+              <h2 style="color: #2d2d2d;">{{ blogpost.title }}
+              </h2>
+              <ul class="blog-info-link mt-3 mb-4">
+                <li><a href="#"><i class="fa fa-user"></i> @{{ blogpost.author.first_name }} {{
+                    blogpost.author.last_name }} </a></li>
+                <li><a href="#"><i class="fa fa-comments"></i> 03 Comments</a></li>
+              </ul>
+              <p class="excert">
+                {{ blogpost.content1|safe }}
+              </p>
+
+              <div class="quote-wrapper">
+                <div class="quotes">
+                  MCSE boot camps have its supporters and its detractors. Some people do not understand why you
+                  should have to spend money on boot camp when you can get the MCSE study materials yourself at
+                  a fraction of the camp price. However, who has the willpower to actually sit through a
+                  self-imposed MCSE training.
+                </div>
+              </div>
+              <p>
+                {{ blogpost.content2|safe }}
+              </p>
+            </div>
+          </div>
+
+          <div class="blog-author">
+            <div class="media align-items-center">
+              <img src="{{ blogpost.author.image.url }}" alt="">
+              <div class="media-body">
+                <a href="#">
+                  <h4>{{ blogpost.author.first_name }} {{ blogpost.author.last_name }}</h4>
+                </a>
+                <p>{{ blogpost.author.bio }}</p>
+              </div>
+            </div>
+          </div>
+          <div class="comments-area">
+            {% if blogpost.comments.all %}
+            <h4>{{ blogpost.comments.all|length }} Comment{{ object.number_of_comments|pluralize }}</h4>
+            {% for BlogComment in blogpost.comments.all %}
+            <div class="comment-list">
+              <div class="single-comment justify-content-between d-flex">
+                <div class="user justify-content-between d-flex">
+                  <div class="thumb">
+                    <img src="https://cdn-icons-png.flaticon.com/128/747/747376.png" alt="">
+                  </div>
+                  <div class="desc">
+                    <p class="comment">{{ BlogComment.content|safe }} </p>
+                    <div class="d-flex justify-content-between">
+                      <div class="d-flex align-items-center">
+                        <h5>
+                          <a href="#">{{ BlogComment.author|title }}</a>
+                        </h5>
+                        <p class="date">{{ BlogComment.date_posted }} </p>
+                      </div>
+                      <div class="reply-btn">
+
+                        {% if user.id == BlogComment.author.id %}
+                        <a href="{% url 'Update_comment' BlogComment.pk %}" class="trigger-btn btn-reply">(Edit)</a>
+                        <a href="{% url 'Delete_comment' BlogComment.pk %}" class="trigger-btn btn-reply">(Delete)</a>
+                        {% endif %}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+                      {% endfor %}
+
+          </div>
+
+          {% else %}
+          <strong class='text-secondary'>No comments yet</strong>
+          {% endif %}
+        
+        {% if user.is_authenticated %}
+        <div class="comment-form-wrap pt-5">
+          <h3 class="mb-5 heading-two" style="font-size: 22px;">Leave a comment</h3>
+          <form method="Post" class="p-4 p-lg-5 comment-form">
+            <div class="row">
+              {% csrf_token %}
+              <div class="col-md-12">
+                <div class="form-group">
+                  <label for="message"></label>
+                  {{ form_comment }}
+
+                  {{ form.as_p }}
+                </div>
+              </div>
+              <div class="col-md-12">
+                <div class="form-group">
+                  <input type="submit" value="Post Comment" class="btn py-3 px-4 btn-darken">
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+        {% else %}
+        <br><br>
+        <h3 class="mb-5 heading-two" style="font-size: 22px;"><a href="{% url 'login' %}?next={{request.path}}">Log in
+            to add a comment!</a></h3>
+
+        {% endif %}
+      </div>
+      <div class="col-lg-4">
+        <div class="blog_right_sidebar">
+          <aside class="single_sidebar_widget search_widget">
+            <form action="#">
+              <div class="form-group">
+                <div class="input-group mb-3">
+                  <input type="text" class="form-control" placeholder='Search Keyword' onfocus="this.placeholder = ''"
+                    onblur="this.placeholder = 'Search Keyword'">
+                  <div class="input-group-append">
+                    <button class="btns" type="button"><i class="ti-search"></i></button>
+                  </div>
+                </div>
+              </div>
+              <button class="button rounded-0 primary-bg text-white w-100 btn_1 boxed-btn" type="submit">Search</button>
+            </form>
+          </aside>
+          <aside class="single_sidebar_widget post_category_widget">
+            <h4 class="widget_title" style="color: #2d2d2d;">Category</h4>
+            <ul class="list cat-list">
+              <li>
+                <a href="#" class="d-flex">
+                  <p>Resaurant food</p>
+                  <p>(37)</p>
+                </a>
+              </li>
+              <li>
+                <a href="#" class="d-flex">
+                  <p>Travel news</p>
+                  <p>(10)</p>
+                </a>
+              </li>
+              <li>
+                <a href="#" class="d-flex">
+                  <p>Modern technology</p>
+                  <p>(03)</p>
+                </a>
+              </li>
+              <li>
+                <a href="#" class="d-flex">
+                  <p>Product</p>
+                  <p>(11)</p>
+                </a>
+              </li>
+              <li>
+                <a href="#" class="d-flex">
+                  <p>Inspiration</p>
+                  <p>(21)</p>
+                </a>
+              </li>
+              <li>
+                <a href="#" class="d-flex">
+                  <p>Health Care</p>
+                  <p>(21)</p>
+                </a>
+              </li>
+            </ul>
+          </aside>
+          <aside class="single_sidebar_widget popular_post_widget">
+            <h3 class="widget_title" style="color: #2d2d2d;">Recent Post</h3>
+            <div class="media post_item">
+              <img src="assets/img/post/post_1.png" alt="post">
+              <div class="media-body">
+                <a href="blog_details.html">
+                  <h3 style="color: #2d2d2d;">From life was you fish...</h3>
+                </a>
+                <p>January 12, 2019</p>
+              </div>
+            </div>
+            <div class="media post_item">
+              <img src="assets/img/post/post_2.png" alt="post">
+              <div class="media-body">
+                <a href="blog_details.html">
+                  <h3 style="color: #2d2d2d;">The Amazing Hubble</h3>
+                </a>
+                <p>02 Hours ago</p>
+              </div>
+            </div>
+            <div class="media post_item">
+              <img src="assets/img/post/post_3.png" alt="post">
+              <div class="media-body">
+                <a href="blog_details.html">
+                  <h3 style="color: #2d2d2d;">Astronomy Or Astrology</h3>
+                </a>
+                <p>03 Hours ago</p>
+              </div>
+            </div>
+            <div class="media post_item">
+              <img src="assets/img/post/post_4.png" alt="post">
+              <div class="media-body">
+                <a href="blog_details.html">
+                  <h3 style="color: #2d2d2d;">Asteroids telescope</h3>
+                </a>
+                <p>01 Hours ago</p>
+              </div>
+            </div>
+          </aside>
+          <aside class="single_sidebar_widget tag_cloud_widget">
+            <h4 class="widget_title" style="color: #2d2d2d;">Tag Clouds</h4>
+            <ul class="list">
+              <li>
+                <a href="#">project</a>
+              </li>
+              <li>
+                <a href="#">love</a>
+              </li>
+              <li>
+                <a href="#">technology</a>
+              </li>
+              <li>
+                <a href="#">travel</a>
+              </li>
+              <li>
+                <a href="#">restaurant</a>
+              </li>
+              <li>
+                <a href="#">life style</a>
+              </li>
+              <li>
+                <a href="#">design</a>
+              </li>
+              <li>
+                <a href="#">illustration</a>
+              </li>
+            </ul>
+          </aside>
+          <aside class="single_sidebar_widget instagram_feeds">
+            <h4 class="widget_title" style="color: #2d2d2d;">Instagram Feeds</h4>
+            <ul class="instagram_row flex-wrap">
+              <li>
+                <a href="#">
+                  <img class="img-fluid" src="assets/img/post/post_5.png" alt="">
+                </a>
+              </li>
+              <li>
+                <a href="#">
+                  <img class="img-fluid" src="assets/img/post/post_6.png" alt="">
+                </a>
+              </li>
+              <li>
+                <a href="#">
+                  <img class="img-fluid" src="assets/img/post/post_7.png" alt="">
+                </a>
+              </li>
+              <li>
+                <a href="#">
+                  <img class="img-fluid" src="assets/img/post/post_8.png" alt="">
+                </a>
+              </li>
+              <li>
+                <a href="#">
+                  <img class="img-fluid" src="assets/img/post/post_9.png" alt="">
+                </a>
+              </li>
+              <li>
+                <a href="#">
+                  <img class="img-fluid" src="assets/img/post/post_10.png" alt="">
+                </a>
+              </li>
+            </ul>
+          </aside>
+          <aside class="single_sidebar_widget newsletter_widget">
+            <h4 class="widget_title" style="color: #2d2d2d;">Newsletter</h4>
+            <form action="#">
+              <div class="form-group">
+                <input type="email" class="form-control" onfocus="this.placeholder = ''"
+                  onblur="this.placeholder = 'Enter email'" placeholder='Enter email' required>
+              </div>
+              <button class="button rounded-0 primary-bg text-white w-100 btn_1 boxed-btn"
+                type="submit">Subscribe</button>
+            </form>
+          </aside>
+        </div>
+      </div>
+    </div>
+    </div>
+  </section>
+
+</main>
+
+{% endblock %}
